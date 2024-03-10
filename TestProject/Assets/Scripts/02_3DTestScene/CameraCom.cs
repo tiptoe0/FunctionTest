@@ -12,6 +12,7 @@ public class CameraCom : MonoBehaviour
     Camera camera_this;
     Transform transform_camera;
     SphereCollider collider_camera;
+    public Transform transform_gizmo;
 
     // Values
     float mouse_scrollwheel;
@@ -48,11 +49,9 @@ public class CameraCom : MonoBehaviour
         GetMouseEvent();
 
         CameraRotate();
-        CameraPerfectPan();
-        //CameraPan();
+        //CameraPerfectPan();
+        CameraPan();
         CameraZoom();
-
-        Debug.Log(isHitCam);
     }
 
     void GetMouseEvent()
@@ -67,6 +66,7 @@ public class CameraCom : MonoBehaviour
         if (obejct_pivot == null)
         {
             obejct_pivot = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            obejct_pivot.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
         }
         obejct_pivot.transform.position = pivotPoint;
         obejct_pivot.SetActive(isOn);
@@ -74,6 +74,7 @@ public class CameraCom : MonoBehaviour
 
     Vector3 GetScreenCenterPoint()
     {
+        // 화면 Center Point 계산
         Vector3 screenCenter = camera_this.ViewportToScreenPoint(new Vector2(0.5f, 0.5f));
         Vector3 worldCenter = camera_this.ScreenToWorldPoint(screenCenter);
 
@@ -98,6 +99,9 @@ public class CameraCom : MonoBehaviour
             transform_camera.RotateAround(pivotPoint, transform_camera.right, mouse_vertical * -rotateSpeed);
             // y축 회전
             transform_camera.RotateAround(pivotPoint, transform_camera.up, mouse_horizontal * rotateSpeed);
+
+            Matrix4x4 camMtx = transform_camera.localToWorldMatrix.inverse;
+            transform_gizmo.localRotation = camMtx.rotation;
         }
         else if (Input.GetMouseButtonUp(1))
         {
@@ -149,17 +153,17 @@ public class CameraCom : MonoBehaviour
 
             b = a + dir * ab;
             transform_camera.position = b;
-
-            //Debug.DrawLine(b, d, Color.yellow, 1000000);
-            //Debug.DrawLine(c, d, Color.blue, 1000000);
         }
         else if (Input.GetMouseButtonUp(2))
         {
             isPan = false;
+
+            //Debug.DrawLine(b, d, Color.yellow, 1000000);
+            //Debug.DrawLine(c, d, Color.blue, 1000000);
         }
     }
 
-    /*
+
     Vector3 panStartPoint, panCurrentPoint;
     Vector3 originCamPos, prevCamPos;
     Vector3 prevY, prevX;
@@ -224,7 +228,7 @@ public class CameraCom : MonoBehaviour
             isPan = false;
         }
     }
-    */
+
 
     void CameraZoom()
     {
