@@ -229,7 +229,6 @@ public class CameraCom : MonoBehaviour
         }
     }
 
-
     void CameraZoom()
     {
         if (mouse_scrollwheel != 0)
@@ -239,20 +238,19 @@ public class CameraCom : MonoBehaviour
             mouse_scrollwheel = Mathf.Clamp(mouse_scrollwheel, -1, 1);
 
             // Check Zoom In & Out
-            if (isHitCam)
+            Vector3 screenPoint = camera_this.WorldToScreenPoint(objectOriginPosition);
+            // Range Over (Zoom In)
+            if (screenPoint.z < 2)
             {
-                // Do not Zoom In
-                if (mouse_scrollwheel == 1)
+                if (mouse_scrollwheel > 0)
                 {
                     mouse_scrollwheel = 0;
                 }
             }
-
-            float distance = Vector3.Distance(objectOriginPosition, transform_camera.position);
-            if (distance > 30)
+            // Range Over (Zoom Out)
+            if (screenPoint.z > 10)
             {
-                // Do not Zoom out
-                if (mouse_scrollwheel == -1)
+                if (mouse_scrollwheel < 0)
                 {
                     mouse_scrollwheel = 0;
                 }
